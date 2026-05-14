@@ -8273,3 +8273,17 @@ linting-workflow-commitlint:         ## 📝  Conventional Commits linting (togg
 			--extends @commitlint/config-conventional \
 			--from '$(COMMITLINT_FROM)' \
 			--to '$(COMMITLINT_TO)'"
+
+
+
+
+# =============================================================================
+# 📈 Helm Chart Validation and Tests
+# =============================================================================
+
+.PHONY: chart-lint chart-test
+chart-lint:
+	helm lint charts/mcp-stack
+
+chart-test:
+	helm test mcp-stack --logs
