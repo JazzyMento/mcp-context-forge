@@ -8287,3 +8287,6 @@ chart-lint:
 
 chart-test:
 	helm test mcp-stack --logs
+
+chart-test-kind:
+	./scripts/ci/test_kind.sh

@@ -1,0 +1,93 @@
+# Values used only for automated Kind-based chart testing.
+# This file disables optional local/demo workloads and external CRD-backed resources
+# so the Helm chart can be tested in a clean lightweight Kubernetes cluster.
+
+mcpContextForge:
+  replicaCount: 1
+  hpa:
+    enabled: false
+  image:
+    repository: ghcr.io/ibm/mcp-context-forge
+    tag: "1.0.0-RC-2"
+    pullPolicy: IfNotPresent
+  ingress:
+    enabled: false
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+
+
+  secret:
+    # Dev credentials (match previous deployment)
+    BASIC_AUTH_USER: admin
+    BASIC_AUTH_PASSWORD: changeme
+    JWT_SECRET_KEY: my-test-key
+    AUTH_ENCRYPTION_SECRET: my-test-salt
+    AUTH_REQUIRED: "true"
+    MCP_REQUIRE_AUTH: "true"
+    PLATFORM_ADMIN_EMAIL: admin@example.com
+    PLATFORM_ADMIN_PASSWORD: changeme
+    # Relax password policy for local dev bootstrap
+    PASSWORD_REQUIRE_UPPERCASE: "false"
+    PASSWORD_REQUIRE_LOWERCASE: "false"
+    PASSWORD_REQUIRE_SPECIAL: "false"
+    REQUIRE_STRONG_SECRETS: "false"
+
+migration:
+  image:
+    repository: ghcr.io/ibm/mcp-context-forge
+    tag: "1.0.0-RC-2"
+    pullPolicy: IfNotPresent
+
+postgres:
+  enabled: true
+  persistence:
+    size: 2Gi
+    storageClassName: standard
+    useReadWriteOncePod: false
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  credentials:
+    database: postgresdb
+    user: admin
+    password: test123
+
+redis:
+  enabled: true
+
+pgadmin:
+  enabled: false
+pgbouncer:
+  enabled: false
+redisCommander:
+  enabled: false
+minio:
+  enabled: false
+
+testing:
+  enabled: false
+  registration:
+    image:
+      repository: ghcr.io/ibm/mcp-context-forge
+      tag: "1.0.0-RC-2"
+      pullPolicy: IfNotPresent
+  locust:
+    enabled: false
+  fastTime:
+    register:
+      enabled: false
+  fastTestServer:
+    enabled: false
+    image:
+      pullPolicy: IfNotPresent
+  fastTest:
+    register:
+      enabled: false
+  a2aEchoAgent:
+    enabled: false
