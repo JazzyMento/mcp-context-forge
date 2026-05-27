@@ -47,3 +47,9 @@ maintainers:
 
 # Require Kubernetes ≥1.21 for networking v1 and recent securityContext fields
 kubeVersion: ">=1.21.0-0"
+
+
+# Display name used by OpenShift/Red Hat chart verification tooling
+# OpenShift chart metadata required by chart-verifier for certification check
+annotations:
+  charts.openshift.io/name: MCP Stack

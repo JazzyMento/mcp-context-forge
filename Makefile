@@ -8281,7 +8281,7 @@ linting-workflow-commitlint:         ## 📝  Conventional Commits linting (togg
 # 📈 Helm Chart Validation and Tests
 # =============================================================================
 
-.PHONY: chart-lint chart-test
+.PHONY: chart-lint chart-test chart-test-kind chart-verify
 chart-lint:
 	helm lint charts/mcp-stack
 
@@ -8290,3 +8290,28 @@ chart-test:
 
 chart-test-kind:
 	./scripts/ci/test_kind.sh
+
+
+CHART_VERSION := $(shell grep '^version:' charts/mcp-stack/Chart.yaml | awk '{print $$2}')
+
+chart-verify:
+	mkdir -p reports
+	rm -rf chartverifier
+	docker run --rm \
+		--platform linux/amd64 \
+		-v "$$(pwd):/workspace" \
+		-w /workspace \
+		quay.io/redhat-certification/chart-verifier:latest \
+		verify charts/mcp-stack \
+		--set profile.vendortype=redhat \
+		--output yaml \
+		--write-to-file
+	cp chartverifier/report.yaml reports/mcp-stack-$(CHART_VERSION).yaml
+
+
+
+.PHONY: chart-package
+
+chart-package:
+	mkdir -p dist
+	helm package charts/mcp-stack --destination dist

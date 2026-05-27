@@ -56,7 +56,7 @@ temp/
 
 # Documentation that shouldn't be in the chart package
 CONTRIBUTING.md
-README.md
+#README.md  # Commenting out because Chart-verifier requires the packaged chart to include a README.
 CHANGELOG.md
 LICENSE
 docs/
