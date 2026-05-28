@@ -1,0 +1,48 @@
+name: Helm Chart CI
+
+on:
+  push:
+    branches:
+      - main
+      - issue-223-helm-chart-test-harness
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  helm-chart-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Set up Kind
+        uses: helm/kind-action@v1
+
+      - name: Lint Helm chart
+        run: make chart-lint
+
+      - name: Run Kind-based chart tests
+        run: make chart-test-kind
+
+      - name: Run chart verifier
+        run: make chart-verify
+
+      - name: Package Helm chart
+        run: make chart-package
+
+      - name: Upload chart verifier report
+        uses: actions/upload-artifact@v4
+        with:
+          name: chart-verifier-report
+          path: reports/*.yaml
+
+      - name: Upload Helm chart package
+        uses: actions/upload-artifact@v4
+        with:
+          name: helm-chart-package
+          path: dist/*.tgz
