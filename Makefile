@@ -8299,6 +8299,9 @@ chart-verify:
 	rm -rf chartverifier
 	docker run --rm \
 		--platform linux/amd64 \
+		--user "$$(id -u):$$(id -g)" \
+		-e HOME=/workspace \
+		-e XDG_CACHE_HOME=/workspace/.cache \
 		-v "$$(pwd):/workspace" \
 		-w /workspace \
 		quay.io/redhat-certification/chart-verifier:latest \
