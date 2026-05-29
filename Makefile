@@ -8318,3 +8318,11 @@ chart-verify:
 chart-package:
 	mkdir -p dist
 	helm package charts/mcp-stack --destination dist
+
+
+# Runs a Python static security scan against all of the MCP Gateway application code
+
+.PHONY: security-check
+
+security-check:
+	bandit -r mcpgateway
