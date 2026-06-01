@@ -28,14 +28,17 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install security tooling
-        run: pip install bandit
+      - name: Install Python test and security tooling
+        run: pip install bandit pytest
 
       - name: Lint Helm chart
         run: make chart-lint
 
       - name: Run security checks
         run: make security-check
+
+      - name: Run gateway health checks
+        run: make test-gateway-health
 
       - name: Run Kind-based chart tests
         run: make chart-test-kind
