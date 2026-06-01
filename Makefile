@@ -8326,3 +8326,10 @@ chart-package:
 
 security-check:
 	bandit -r mcpgateway
+
+
+
+.PHONY: test-gateway-health
+
+test-gateway-health:
+	pytest scripts/ci/tests/test_check_gateway_health.py
