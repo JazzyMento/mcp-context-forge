@@ -43,6 +43,9 @@ jobs:
       - name: Run Kind-based chart tests
         run: make chart-test-kind
 
+      - name: Pull chart verifier image
+        run: docker pull quay.io/redhat-certification/chart-verifier:latest
+
       - name: Run chart verifier
         run: make chart-verify
 
