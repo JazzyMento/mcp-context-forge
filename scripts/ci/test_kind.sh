@@ -32,6 +32,39 @@ kubectl wait --for=condition=Ready pod \
 echo "Running Helm tests..."
 helm test "${RELEASE_NAME}" --logs
 
+
+echo "Installing metrics-server for resource snapshot..."
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+kubectl patch deployment metrics-server -n kube-system \
+  --type='json' \
+  -p='[
+    {
+      "op": "add",
+      "path": "/spec/template/spec/containers/0/args/-",
+      "value": "--kubelet-insecure-tls"
+    }
+  ]' || true
+
+kubectl rollout status deployment/metrics-server -n kube-system --timeout=120s || true
+
+echo "Waiting briefly for metrics to become available..."
+sleep 30
+
+mkdir -p reports
+
+echo "Capturing Kubernetes pod status..."
+kubectl get pods -A > reports/kubectl-get-pods.txt  2>&1 || true
+
+echo "Capturing Kubernetes node status..."
+kubectl get nodes -o wide > reports/kubectl-get-nodes.txt  2>&1 || true
+
+echo "Capturing node resource usage..."
+kubectl top nodes > reports/kubectl-top-nodes.txt  2>&1 || true
+
+echo "Capturing pod resource usage..."
+kubectl top pods -A > reports/kubectl-top-pods.txt 2>&1 || true
+
 #Deletes the temp Kind cluster after the tests finish
 echo "Deleting Kind cluster..."
 kind delete cluster --name "${CLUSTER_NAME}"
