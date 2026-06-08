@@ -1,3 +1,9 @@
+"""Unit tests for the gateway health response validation helper
+
+These tests check that only a valid {"status": "healthy"} response is treated
+as healthy; unhealthy, incomplete or invalid responses return False
+"""
+
 from scripts.ci.check_gateway_health import is_gateway_healthy
 
 

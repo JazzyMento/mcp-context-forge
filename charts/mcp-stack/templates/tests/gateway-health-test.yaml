@@ -1,3 +1,9 @@
+# ===================================================================================================
+# Defines a Helm test pod that can be run after the MCP Gateway Helm chart is installed
+# Uses curl to verify that the deployed MCP Gateway service responds successfully on /health
+# Fails the test if the gateway health endpoint is unreachable or returns an error
+# ===================================================================================================
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -5,10 +11,11 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+  # Do not restart the test pod after it completes; pass/fail should reflect the first test run
   restartPolicy: Never
   containers:
     - name: curl
-      image: curlimages/curl:latest
+      image: curlimages/curl:latest   # Uses a lightweight curl image to call the deployed MCP Gateway health endpoint
       command:
         - sh
         - -c

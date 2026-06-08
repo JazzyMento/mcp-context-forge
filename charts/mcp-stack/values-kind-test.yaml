@@ -1,6 +1,12 @@
-# Values used only for automated Kind-based chart testing.
+# ===================================================================================================
+# Values used only for automated Kind-based chart testing
+# It is NOT intended for production use
 # This file disables optional local/demo workloads and external CRD-backed resources
-# so the Helm chart can be tested in a clean lightweight Kubernetes cluster.
+# so the Helm chart can be tested in a clean lightweight, repeatable Kubernetes cluster.
+#
+# Image pull policies use IfNotPresent so Kind/CI can reuse cached images
+# while still pulling from the registry if an image is not already available
+# ===================================================================================================
 
 mcpContextForge:
   replicaCount: 1
@@ -10,11 +16,13 @@ mcpContextForge:
     repository: ghcr.io/ibm/mcp-context-forge
     tag: "1.0.0-RC-2"
     pullPolicy: IfNotPresent
+
   ingress:
-    enabled: false
+    enabled: false        # Not needed for in-cluster Helm tests
+
   metrics:
     enabled: false
-    serviceMonitor:
+    serviceMonitor:       # Disable ServiceMonitor because the CI Kind cluster does not install Prometheus Operator CRDs
       enabled: false
 
 
@@ -40,6 +48,8 @@ migration:
     tag: "1.0.0-RC-2"
     pullPolicy: IfNotPresent
 
+
+# Core infrastructure — lightweight settings for Kind chart testing
 postgres:
   enabled: true
   persistence:
@@ -61,6 +71,8 @@ postgres:
 redis:
   enabled: true
 
+
+# Disable optional admin/storage tools that are not required for Helm chart validation
 pgadmin:
   enabled: false
 pgbouncer:
@@ -70,6 +82,8 @@ redisCommander:
 minio:
   enabled: false
 
+
+# Disable optional demo/test workloads
 testing:
   enabled: false
   registration:
@@ -78,16 +92,16 @@ testing:
       tag: "1.0.0-RC-2"
       pullPolicy: IfNotPresent
   locust:
-    enabled: false
+    enabled: false     # Outside the Kind chart test scope
   fastTime:
     register:
-      enabled: false
+      enabled: false   # Registration auth/RBAC is outside chart test scope
   fastTestServer:
-    enabled: false
+    enabled: false     # Optional demo server not needed for chart validation
     image:
       pullPolicy: IfNotPresent
   fastTest:
     register:
-      enabled: false
+      enabled: false   # Auto-registration jobs not needed for Helm test validation
   a2aEchoAgent:
-    enabled: false
+    enabled: false     # Not needed for chart validation

@@ -1,3 +1,9 @@
+# ===================================================================================================
+# Defines a Helm test pod that can be run after the MCP Gateway Helm chart is installed
+# Uses nslookup to verify that the Postgres service is discoverable through Kubernetes DNS
+# Fails the test if the Postgres service name cannot be resolved
+# ===================================================================================================
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -5,10 +11,11 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+  # Do not restart the test pod after it completes; pass/fail should reflect the first test run
   restartPolicy: Never
   containers:
     - name: db-service-check
-      image: busybox:1.36
+      image: busybox:1.36    # Uses BusyBox as it is lightweight and includes basic networking tools like nslookup
       command:
         - sh
         - -c

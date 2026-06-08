@@ -8275,13 +8275,19 @@ linting-workflow-commitlint:         ## 📝  Conventional Commits linting (togg
 			--to '$(COMMITLINT_TO)'"
 
 
-
-
 # =============================================================================
-# 📈 Helm Chart Validation and Tests
+# 📈 Helm Chart Validation and Tests - Used in Helm Chart CI
 # =============================================================================
+# help:
+# help: chart-lint              - Lint the mcp-stack Helm chart for syntax and chart structure issues
+# help: chart-test              - Run Helm test hooks against an installed mcp-stack release
+# help: chart-test-kind         - Create a temp Kind cluster, install the chart, run Helm tests and capture runtime reports
+# help: chart-verify            - Run Red Hat chart-verifier and save the YAML report
+# help: chart-package           - Package the mcp-stack Helm chart as a versioned .tgz artifact
+# help: security-check          - Run Bandit security scanning against the Python gateway code
+# help: test-gateway-health     - Run pytest unit tests for the gateway health validation helper
 
-.PHONY: chart-lint chart-test chart-test-kind chart-verify
+.PHONY: chart-lint chart-test chart-test-kind chart-verify chart-package
 chart-lint:
 	helm lint charts/mcp-stack
 
@@ -8312,24 +8318,16 @@ chart-verify:
 	cp chartverifier/report.yaml reports/mcp-stack-$(CHART_VERSION).yaml
 
 
-
-.PHONY: chart-package
-
 chart-package:
 	mkdir -p dist
 	helm package charts/mcp-stack --destination dist
 
 
-# Runs a Python static security scan against all of the MCP Gateway application code
-
-.PHONY: security-check
+# CI checks for Python security and gateway health unit tests
+.PHONY: security-check test-gateway-health
 
 security-check:
 	bandit -r mcpgateway
-
-
-
-.PHONY: test-gateway-health
 
 test-gateway-health:
 	pytest scripts/ci/tests/test_check_gateway_health.py
