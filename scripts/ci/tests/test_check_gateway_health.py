@@ -1,27 +1,39 @@
-"""Unit tests for the gateway health response validation helper
+"""Unit tests for the gateway health response validation helper.
 
-These tests check that only a valid {"status": "healthy"} response is treated
-as healthy; unhealthy, incomplete or invalid responses return False
+These tests check the expected gateway health contract:
+HTTP 200 and {"status": "healthy"} is treated as healthy.
+Any other HTTP status, unhealthy response, incomplete response or invalid response
+is treated as not healthy.
 """
 
 from scripts.ci.check_gateway_health import is_gateway_healthy
 
 
-def test_healthy_response_returns_true():
+def test_http_200_and_healthy_response_returns_true():
     response = {"status": "healthy"}
-    assert is_gateway_healthy(response) is True
+
+    assert is_gateway_healthy(200, response) is True
 
 
-def test_unhealthy_response_returns_false():
+def test_http_500_and_healthy_response_returns_false():
+    response = {"status": "healthy"}
+
+    assert is_gateway_healthy(500, response) is False
+
+
+def test_http_200_and_unhealthy_response_returns_false():
     response = {"status": "unhealthy"}
-    assert is_gateway_healthy(response) is False
+
+    assert is_gateway_healthy(200, response) is False
 
 
-def test_missing_status_returns_false():
+def test_http_200_and_missing_status_returns_false():
     response = {"message": "ok"}
-    assert is_gateway_healthy(response) is False
+
+    assert is_gateway_healthy(200, response) is False
 
 
-def test_non_dictionary_response_returns_false():
+def test_http_200_and_non_dictionary_response_returns_false():
     response = "healthy"
-    assert is_gateway_healthy(response) is False
+
+    assert is_gateway_healthy(200, response) is False

@@ -8323,11 +8323,17 @@ chart-package:
 	helm package charts/mcp-stack --destination dist
 
 
-# CI checks for Python security and gateway health unit tests
-.PHONY: security-check test-gateway-health
+# CI checks for Python security and gateway health unit tests.
+.PHONY: security-check python-test-gateway-health smoke-gateway-health
 
 security-check:
 	bandit -r mcpgateway
 
-test-gateway-health:
+python-test-gateway-health:
 	pytest scripts/ci/tests/test_check_gateway_health.py
+
+
+GATEWAY_HEALTH_URL ?= http://127.0.0.1:4444/health
+
+smoke-gateway-health:
+	python scripts/ci/check_gateway_health.py $(GATEWAY_HEALTH_URL)

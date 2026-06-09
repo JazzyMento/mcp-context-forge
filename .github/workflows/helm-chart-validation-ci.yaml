@@ -35,7 +35,9 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python test and security tooling
-        run: pip install bandit pytest
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest pytest-asyncio pytest-env bandit
 
       - name: Lint Helm chart
         run: make chart-lint
@@ -43,8 +45,8 @@ jobs:
       - name: Run security checks
         run: make security-check
 
-      - name: Run gateway health unit tests
-        run: make test-gateway-health
+      - name: Run gateway health Python unit tests
+        run: make python-test-gateway-health
 
       - name: Run Kind-based chart tests
         run: make chart-test-kind
