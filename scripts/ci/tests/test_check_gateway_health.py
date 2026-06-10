@@ -1,9 +1,10 @@
 """Unit tests for the gateway health response validation helper.
 
-These tests check the expected gateway health contract:
-HTTP 200 and {"status": "healthy"} is treated as healthy.
+These tests check that the gateway is only treated as healthy when the /health endpoint responds
+HTTP 200 and {"status": "healthy"}.
+
 Any other HTTP status, unhealthy response, incomplete response or invalid response
-is treated as not healthy.
+is treated as NOT healthy.
 """
 
 from scripts.ci.check_gateway_health import is_gateway_healthy

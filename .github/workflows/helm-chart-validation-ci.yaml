@@ -1,7 +1,11 @@
 # =========================================================================================
+#
+# Helm Chart Validation CI
+#
 # Validates the mcp-stack Helm chart by running linting, security checks,
-# unit tests, Kind-based deployment tests, chart verification, packaging,
+# unit tests, Kind-based deployment tests, chart verification, chart packaging,
 # and CI artefact uploads.
+#
 # =========================================================================================
 
 name: Helm Chart Validation CI

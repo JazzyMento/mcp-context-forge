@@ -1,0 +1,15 @@
+# Helm Chart CI Quality Gates and Remediation
+
+This document explains the quality gates used in the MCP Gateway Helm chart validation pipeline, what each check proves, what cause of failures may be, and follow-up actions that can be taken.
+
+| CI quality gate | Source / command | When to investigate | What failure means | Remediation / follow-up action |
+|---|---|---|---|---|
+| Helm chart linting | `make chart-lint` | `helm lint` fails | The Helm chart may contain syntax, template, metadata or structure issues | Review lint output, fix chart YAML/templates/metadata, rerun `make chart-lint` |
+| Python security scan | `make security-check` / Bandit | Bandit reports medium or high severity issues | Python code may contain insecure patterns or risky implementation choices | Review Bandit finding, assess likelihood/impact, fix code or document accepted risk, rerun `make security-check` |
+| Gateway health unit tests | `make python-test-gateway-health` / pytest | Any pytest test fails | Health-response validation logic may have regressed, which could make the reusable gateway smoke-check helper unreliable | Review failing test, fix `make python-test-gateway-health` or update tests if expected behaviour changed, rerun pytest |
+| Kind chart deployment test | `make chart-test-kind` | Kind cluster creation, Helm install, Helm tests or runtime report capture fails | The chart may not deploy cleanly in a fresh Kubernetes environment or a dependency may be unavailable | Review CI logs, Helm test logs, `kubectl get pods`, runtime reports and reproduce locally using `make chart-test-kind` |
+| Helm test hooks | `helm test mcp-stack --logs` | `gateway-health-test` or `db-ready-test` fails | The deployed gateway may be unavailable or Postgres service discovery may be broken | Review Helm test pod logs, service names, pod readiness, DNS/service discovery and Helm values |
+| Chart verification | `make chart-verify` / chart-verifier report | One or more mandatory chart-verifier checks ouctome returned FAIL | The chart may not meet packaging or certification-readiness expectations | Review the YAML report created from running `make chart-verify`, identify failed mandatory checks to fix, rerun `make chart-verify` |
+| Chart packaging | `make chart-package` | No `.tgz` package is created or packaging fails | The Helm chart may not be ready to distribute as a delivery artifact | Review package command output, chart metadata and `dist/` contents, rerun `make chart-package` |
+| Artifact upload | GitHub Actions `upload-artifact` steps | Expected report/package/runtime snapshot is missing | CI evidence may not be available for review or handover | Check artifact paths, confirm files exist in `reports/` or `dist/`, update workflow paths and rerun CI |
+| Overall CI workflow | GitHub Actions workflow | Any required job fails | A pushed change may have broken validation, automation or release-readiness | Review failing step logs, reproduce locally with the matching Makefile target, fix and rerun the pipeline |

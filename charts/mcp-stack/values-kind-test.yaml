@@ -1,10 +1,11 @@
 # ===================================================================================================
-# Values used only for automated Kind-based chart testing
+# Values used ONLY for automated Kind-based chart testing
 # It is NOT intended for production use
+#
 # This file disables optional local/demo workloads and external CRD-backed resources
 # so the Helm chart can be tested in a clean lightweight, repeatable Kubernetes cluster.
 #
-# Image pull policies use IfNotPresent so Kind/CI can reuse cached images
+# Image pull policies set to IfNotPresent so Kind/CI can reuse cached images
 # while still pulling from the registry if an image is not already available
 # ===================================================================================================
 
