@@ -68,7 +68,7 @@ jobs:
       - name: Upload chart verifier report
         uses: actions/upload-artifact@v4
         with:
-          name: chart-verifier-report
+          name: helm-chart-verifier-report
           path: reports/*.yaml
 
       - name: Upload Helm chart package
