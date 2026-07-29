@@ -22,6 +22,9 @@ spec:
         - |
           echo "Checking Postgres service discovery..."
 
-          nslookup mcp-stack-postgres.default.svc.cluster.local
+            if ! nslookup mcp-stack-postgres.default.svc.cluster.local; then
+              echo "Postgres service discovery failed"
+              exit 1
+            fi
 
           echo "Postgres service is discoverable through Kubernetes DNS"
